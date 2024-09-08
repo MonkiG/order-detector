@@ -1,0 +1,31 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "server for the order decetor",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "ts-node-dev --env-file=.env ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "6.8.1",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.7.5",
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.12",
+    "eslint": "^9.10.0",
+    "globals": "^15.9.0",
+    "prettier": "3.3.3",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.5.4",
+    "typescript-eslint": "^8.4.0"
+  }
+}
