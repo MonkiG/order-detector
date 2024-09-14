@@ -5,6 +5,7 @@ import { addProduct } from '../services'
 import { toast, Toaster } from 'sonner'
 import { Routes } from '@renderer/common/utils/routes'
 import ProductForm from '../ProductForm'
+import { useAppContext } from '@renderer/common/context/AppContext'
 
 export default function AddProductView() {
   const [, redirect] = useLocation()
@@ -14,6 +15,8 @@ export default function AddProductView() {
     description: '',
     showInScreen: true
   })
+
+  const { dispatch } = useAppContext()
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -25,12 +28,12 @@ export default function AddProductView() {
     }
 
     addProduct(data).then((tuple) => {
-      const [err] = tuple
+      const [err, product] = tuple
       if (err && err.message === 'Server error') {
         toast.error('Error adding the product, try later!', { duration: Infinity })
         return
       }
-      toast.success('Product added successfully', { duration: Infinity })
+      dispatch({ type: 'ADD_PRODUCT', payload: { product: { ...data, id: product.id } } })
       redirect(Routes.products)
     })
   }

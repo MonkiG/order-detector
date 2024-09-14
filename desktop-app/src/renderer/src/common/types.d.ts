@@ -5,3 +5,12 @@ export interface Product {
   description: string
   showInScreen: boolean
 }
+
+export interface Waiter {
+  id: string
+  name: string
+  lastName: string
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}

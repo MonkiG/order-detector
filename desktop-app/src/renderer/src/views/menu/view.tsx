@@ -2,10 +2,13 @@ import ViewLayout from '@renderer/common/layouts/ViewLayout'
 import { ChangeEvent, FormEvent, useRef } from 'react'
 import { Toaster, toast } from 'sonner'
 import { getMenuTemplate, uploadMenu } from './services'
+import { useAppContext } from '@renderer/common/context/AppContext'
 
 export default function MenuView() {
   const formData = useRef(new FormData()).current
   const inputFileRef = useRef<HTMLInputElement>(null)
+
+  const { dispatch } = useAppContext()
 
   const handleExcelTemplate = async (): Promise<void> => {
     const [error, blob] = await getMenuTemplate()
@@ -36,12 +39,12 @@ export default function MenuView() {
 
     uploadMenu(formData)
       .then((res) => {
-        const [error] = res
+        const [error, data] = res
         if (error) {
           toast.error('Error downloading uploading the menu, try later')
           return
         }
-
+        dispatch({ type: 'SET_PRODUCTS', payload: { products: data } })
         toast.success('Menu submitted successfully')
       })
       .finally(() => {

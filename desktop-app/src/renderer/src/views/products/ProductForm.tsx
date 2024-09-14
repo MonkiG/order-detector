@@ -1,5 +1,5 @@
 import { Product } from '@renderer/common/types'
-import { ChangeEvent, FormEvent, useRef } from 'react'
+import { ChangeEvent, FormEvent } from 'react'
 
 interface Props {
   data: Partial<Product>

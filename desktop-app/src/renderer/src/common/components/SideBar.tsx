@@ -7,12 +7,9 @@ interface Props {
 }
 
 export default function SideBar({ location }: Props) {
+  const noShow = ['login', 'order', 'addProduct', 'editProduct', 'addWaiter', 'editWaiter']
   const sieBarRoutes = useMemo(
-    () =>
-      Object.entries(Routes).filter(
-        ([key]) =>
-          key !== 'login' && key !== 'order' && key !== 'addProduct' && key !== 'editProduct'
-      ),
+    () => Object.entries(Routes).filter(([x]) => !noShow.includes(x)),
     []
   )
 

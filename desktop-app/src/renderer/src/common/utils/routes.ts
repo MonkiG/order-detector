@@ -4,7 +4,10 @@ export const Routes = {
   orders: '/orders',
   products: '/products',
   addProduct: '/products/add',
-  editProduct: '/products/add/:id',
+  editProduct: '/products/edit/:id',
+  waiters: '/waiters',
+  addWaiter: '/waiters/add',
+  editWaiter: '/waiters/edit/:id',
   login: '/login',
   order: '/order/'
 }
