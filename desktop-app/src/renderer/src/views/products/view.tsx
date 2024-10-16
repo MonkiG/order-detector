@@ -6,6 +6,7 @@ import { useAppContext } from '@renderer/common/context/AppContext'
 import { toast, Toaster } from 'sonner'
 import { Product } from '@renderer/common/types'
 import { deleteProductById } from './services'
+import NoData from '@renderer/common/components/NoData'
 
 export default function ProductsView() {
   const { state, dispatch } = useAppContext()
@@ -53,7 +54,7 @@ export default function ProductsView() {
           data={state.products}
         />
       ) : (
-        <h2>No products found</h2>
+        <NoData dataName="products" />
       )}
     </ViewLayout>
   )

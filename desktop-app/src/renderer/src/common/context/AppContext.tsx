@@ -89,7 +89,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const getProducts = async () => {
       try {
         const data = await httpClient(PRODUCTS_ENDPOINT, { method: 'GET' })
-        dispatch({ type: 'SET_PRODUCTS', payload: { products: data as Product[] } })
+        dispatch({ type: 'SET_PRODUCTS', payload: { products: (data as Product[]) || [] } })
       } catch (error) {
         console.log(error)
       }
@@ -101,7 +101,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     ;(async () => {
       const [, waiters] = await getAllWaiters()
-      dispatch({ type: 'SET_WAITERS', payload: { waiters: waiters } })
+      dispatch({ type: 'SET_WAITERS', payload: { waiters: waiters || [] } })
     })()
   }, [])
 

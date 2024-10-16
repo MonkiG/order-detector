@@ -2,6 +2,7 @@ import { useLocation } from 'wouter'
 import SideBar from '../components/SideBar'
 import ContentLayout from './ContentLayout'
 import { ReactNode } from 'react'
+import BackButton from '../components/BackButton'
 
 interface Props {
   children: React.ReactNode
@@ -18,9 +19,7 @@ export default function ViewLayout({ children, viewTitle }: Props) {
           {/**
            * TODO: Poner un svg a esta madre
            * */}
-          <button onClick={() => window.history.back()} className="absolute top-2 left-0">
-            {'<-'}
-          </button>
+          <BackButton className="absolute top-1 left-0" />
           {typeof viewTitle === 'string' ? (
             <h2 className="text-center text-3xl font-bold">{viewTitle}</h2>
           ) : (

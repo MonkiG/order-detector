@@ -12,6 +12,7 @@ import EditProductView from './views/products/edit-product/view'
 import WaitersView from './views/waiters/view'
 import AddWaiterView from './views/waiters/add-waiter/view'
 import EditWaiterView from './views/waiters/edit-waiter/view'
+import KitchenView from './views/kitchen/view'
 
 export default function App() {
   const [, redirect] = useLocation()
@@ -33,6 +34,8 @@ export default function App() {
       <Route path={Routes.products} component={ProductsView} />
       <Route path={Routes.addProduct} component={AddProductView} />
       <Route path={Routes.editProduct} component={EditProductView} />
+
+      <Route path={Routes.kitchen} component={KitchenView} />
       <Route path={'*'} component={View404} />
     </Switch>
   )

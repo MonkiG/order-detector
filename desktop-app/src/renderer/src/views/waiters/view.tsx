@@ -6,6 +6,7 @@ import { Routes } from '@renderer/common/utils/routes'
 import { toast, Toaster } from 'sonner'
 import { Link } from 'wouter'
 import { deleteWaiterById } from './services'
+import NoData from '@renderer/common/components/NoData'
 
 export default function WaitersView() {
   const { state, dispatch } = useAppContext()
@@ -54,7 +55,7 @@ export default function WaitersView() {
           noShow={noShow as Array<keyof Waiter>}
         />
       ) : (
-        <h2>No Waiters found</h2>
+        <NoData dataName="waiters" />
       )}
     </ViewLayout>
   )

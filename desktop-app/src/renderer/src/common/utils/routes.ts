@@ -8,6 +8,7 @@ export const Routes = {
   waiters: '/waiters',
   addWaiter: '/waiters/add',
   editWaiter: '/waiters/edit/:id',
+  kitchen: '/kitchen',
   login: '/login',
   order: '/order/'
 }
