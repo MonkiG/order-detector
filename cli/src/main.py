@@ -1,45 +1,56 @@
-from config import SPEECH_KEY, SPEECH_REGION, SERVER_URL
-import azure.cognitiveservices.speech as speechsdk
+from config import SERVER_URL
+from recognize_real_time import recognize_real_time
+from services.products_services import get_products
+from services.waiters_services import get_waiters
+
 import socketio
-
-sio = socketio.Client()
-sio.connect(SERVER_URL)
-
-speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
-speech_config.speech_recognition_language = "es-MX"
-
-audio_config = speechsdk.audio.AudioConfig(use_default_microphone=True)
-
-speech_recognizer = speechsdk.SpeechRecognizer(
-    speech_config=speech_config, audio_config=audio_config
-)
+import console
+import time
 
 
-def recognized_handler(evt):
-    if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech:
-        # Acá se hace el envio a la base de datos con sio lul
-        recognized_text = evt.result.text
-        sio.emit("add", {"test": "hola-mundo-hehe"})
-        print("Reconocido", recognized_text)
+def retrying_service(number_tries: int, service):
+    for attempt in range(number_tries):
+        error, data = service()
+        if error is None:
+            return data
+        else:
+            console.warn(f"Intento {attempt + 1} fallido: {error}")
+            if attempt < number_tries - 1:
+                time.sleep(2)
 
-    elif evt.result.reason == speechsdk.ResultReason.NoMatch:
-        print("No se reconoció el habla.")
-    elif evt.result.reason == speechsdk.ResultReason.Canceled:
-        cancellation_details = evt.result.cancellation_details
-        print(f"Reconocimiento cancelado: {cancellation_details.reason}")
-
-
-speech_recognizer.recognized.connect(recognized_handler)
-
-print("Iniciando el reconocimiento continuo. Presiona Ctrl+C para detener.")
-speech_recognizer.start_continuous_recognition()
+    raise Exception(f"All the attempts ({number_tries}) failed")
 
 
-try:
-    while True:
-        pass
-except KeyboardInterrupt:
-    print("Deteniendo el reconocimiento continuo.")
-    speech_recognizer.stop_continuous_recognition()
+def main():
+    RETRYING_COUNT = 5
+    console.log("Initilazing order detector")
 
-sio.disconnect()
+    console.log("getting menu")
+    products = retrying_service(RETRYING_COUNT, get_products)
+    console.success("Products retrieved successfully")
+
+    console.log("Getting waiters")
+    waiters = retrying_service(RETRYING_COUNT, get_waiters)
+    console.success("Waiters retrieved successfully")
+
+    console.log("Connecting to server socket")
+    sio = socketio.Client()
+    sio.connect(SERVER_URL)
+    console.success("Connected to server socket")
+    speech_recognizer = recognize_real_time(sio)
+
+    try:
+        while True:
+            time.sleep(0.5)
+            pass
+    except KeyboardInterrupt:
+        console.warn("Stopping order detector.")
+        speech_recognizer.stop_continuous_recognition()
+        console.warn("Order detector stopped")
+
+    sio.disconnect()
+    console.warn("Disconnected from server socket")
+
+
+if __name__ == "__main__":
+    main()
