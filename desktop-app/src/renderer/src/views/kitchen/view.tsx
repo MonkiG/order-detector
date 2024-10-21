@@ -1,68 +1,62 @@
 import BackButton from '@renderer/common/components/BackButton'
 import NoData from '@renderer/common/components/NoData'
-import useSocket from '@renderer/common/hooks/useSocket'
+import { useEffect, useState } from 'react'
+import { socket } from '@renderer/common/utils/socket'
 
 interface Product {
+  id: string
   table: string
   waiter: string
   name: string
   amount: number | string
-  notes: string
+  notes: string | null
 }
 
-const placeHolder: Product[] = [
-  {
-    table: '1',
-    waiter: 'Alice Johnson',
-    name: 'Spaghetti Bolognese',
-    amount: 2,
-    notes: 'Extra sauce, no cheese'
-  },
-  {
-    table: '2',
-    waiter: 'Bob Smith',
-    name: 'Caesar Salad',
-    amount: 1,
-    notes: 'No croutons, add chicken'
-  },
-  {
-    table: '3',
-    waiter: 'Carla Brown',
-    name: 'Margarita Pizza',
-    amount: 3,
-    notes: 'Extra cheese, half with mushrooms'
-  },
-  {
-    table: '4',
-    waiter: 'David Lee',
-    name: 'Grilled Salmon',
-    amount: '1',
-    notes: 'Lemon on the side, no butter'
-  },
-  {
-    table: '5',
-    waiter: 'Eva Green',
-    name: 'Cheeseburger',
-    amount: 2,
-    notes: 'No onions, extra pickles'
-  }
-]
-export default function KitchenView() {
-  const { data } = useSocket<Product[]>('products', undefined, placeHolder)
+export default function KitchenView(): React.JSX.Element {
+  const [data, setData] = useState<Product[]>([])
 
+  useEffect(() => {
+    if (!socket.connected) {
+      socket.connect()
+    }
+
+    socket.on('connect', () => {
+      console.log('connected')
+    })
+
+    socket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err)
+    })
+
+    socket.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason)
+    })
+
+    socket.on('kitchen-products', (data: Product[]) => {
+      setData((prev) => [...prev, ...data])
+    })
+
+    return (): void => {
+      socket.off('connect')
+      socket.off('connect_error')
+      socket.off('disconnect')
+      socket.off('kitchen-products')
+      socket.disconnect()
+    }
+  }, [])
   /**
    * TODO: Arreglar los estilos de esta mamada
    * */
   return (
-    <div className="bg-white h-screen">
+    <div className="bg-white h-screen flex flex-col justify-between">
       <div className="relative p-5">
         <BackButton className="absolute top-5 left-2" />
         <h2 className="text-center text-4xl font-bold">Products</h2>
       </div>
-      <div>
+      <div className="h-full px-5 pb-5">
         {data && data.length > 0 ? (
           data.map((p) => (
-            <div className="flex justify-between">
+            <div key={p.id} className="flex justify-between">
               <div className="flex flex-col items center justify-center">
                 <h2>Table: {p.table}</h2>
                 <h2>Waiter: {p.waiter}</h2>
@@ -70,12 +64,13 @@ export default function KitchenView() {
               <div className="flex flex-col items center justify-center">{p.name}</div>
               <div className="flex flex-col items center justify-center">
                 <h2>Amount: {p.amount}</h2>
-                <h2> Notes: {p.notes}</h2> {/**TODO: Manejar las notas que son muy largas */}
+                {p.notes && <h2>Notes: {p.notes}</h2>}
+                {/**TODO: Manejar las notas que son muy largas */}
               </div>
             </div>
           ))
         ) : (
-          <NoData dataName="products" />
+          <NoData dataName="products" className="h-full p-0 my-0" />
         )}
       </div>
     </div>
