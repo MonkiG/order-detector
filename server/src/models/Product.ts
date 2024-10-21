@@ -9,3 +9,9 @@ export interface Product {
 }
 
 export type ProductRequestDto = Omit<Product, 'id'>
+
+export interface IProductToKitchen {
+  id: ObjectId
+  name: string
+  amount: number | string
+}
