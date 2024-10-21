@@ -1,9 +1,9 @@
-from config import SERVER_URL
 from recognize_real_time import recognize_real_time
 from services.products_services import get_products
 from services.waiters_services import get_waiters
+from app_sio import sio
+from config import SERVER_URL
 
-import socketio
 import console
 import time
 
@@ -34,10 +34,9 @@ def main():
     console.success("Waiters retrieved successfully")
 
     console.log("Connecting to server socket")
-    sio = socketio.Client()
     sio.connect(SERVER_URL)
     console.success("Connected to server socket")
-    speech_recognizer = recognize_real_time(sio)
+    speech_recognizer = recognize_real_time()
 
     try:
         while True:
