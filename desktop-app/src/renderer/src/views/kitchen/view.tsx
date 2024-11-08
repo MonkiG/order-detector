@@ -1,7 +1,7 @@
 import BackButton from '@renderer/common/components/BackButton'
 import NoData from '@renderer/common/components/NoData'
-import { useEffect, useState } from 'react'
-import { socket } from '@renderer/common/utils/socket'
+
+import useSocket from '@renderer/common/hooks/useSocket'
 
 interface Product {
   id: string
@@ -12,38 +12,22 @@ interface Product {
   notes: string | null
 }
 
+const socketHandler = (
+  set: React.Dispatch<React.SetStateAction<Product[]>>,
+  data: Product[] | Product
+): void => {
+  if (Array.isArray(data)) {
+    set((prev) => [...prev, ...data])
+  } else {
+    set((prev) => [...prev, data])
+  }
+}
 export default function KitchenView(): React.JSX.Element {
-  const [data, setData] = useState<Product[]>([])
-
-  useEffect(() => {
-    if (!socket.connected) {
-      socket.connect()
-    }
-
-    socket.on('connect', () => {
-      console.log('connected')
-    })
-
-    socket.on('connect_error', (err) => {
-      console.error('Socket connection error:', err)
-    })
-
-    socket.on('disconnect', (reason) => {
-      console.log('Socket disconnected:', reason)
-    })
-
-    socket.on('kitchen-products', (data: Product[]) => {
-      setData((prev) => [...prev, ...data])
-    })
-
-    return (): void => {
-      socket.off('connect')
-      socket.off('connect_error')
-      socket.off('disconnect')
-      socket.off('kitchen-products')
-      socket.disconnect()
-    }
-  }, [])
+  const data = useSocket<Product[]>({
+    event: 'kitchen-products',
+    defaultData: [],
+    handler: socketHandler
+  })
   /**
    * TODO: Arreglar los estilos de esta mamada
    * */

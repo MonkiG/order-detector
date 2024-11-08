@@ -1,5 +1,4 @@
 import NoData from '@renderer/common/components/NoData'
-//import Table from '@renderer/common/components/Table'
 import useSocket from '@renderer/common/hooks/useSocket'
 import ViewLayout from '@renderer/common/layouts/ViewLayout'
 import { Toaster } from 'sonner'
@@ -37,8 +36,16 @@ const placeholderData: Order[] = [
   }
 ]
 
+const socketHandler = (set: React.Dispatch<React.SetStateAction<Order[]>>, data: Order[]): void => {
+  set((prev) => [...prev, ...data])
+}
 export default function OrdersView(): JSX.Element {
-  const { data } = useSocket<Order>('orders', undefined, placeholderData)
+  let data = useSocket<Order[]>({
+    event: 'orders',
+    defaultData: [],
+    handler: socketHandler
+  })
+  data = data.length > 0 ? data : placeholderData
   /**
    * TODO:
    * - Modifcar la tabla para redirigir a editar y ver details
