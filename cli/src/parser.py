@@ -19,7 +19,6 @@ count_dictionary = {
 
 def parse_text_to_json(text: str, type: str):
     text_parsed = _remove_accents(text.lower().strip())
-    print(text_parsed, type)
 
     if type == "mesero":
         waiter = text_parsed.split(" ")[-1]
@@ -34,16 +33,16 @@ def parse_text_to_json(text: str, type: str):
 
         table_regex = r"(T|t|de|De)\s*(\d)"
         products_regex = r"(productos|productos,)"
-        notes_regex = r"(?:nota|notas)[,:\s]+([\w\s\-]+)"
 
         table = re.split(table_regex, text_parsed)[2]
-        products = re.split(products_regex, text_parsed)[
-            -1
-        ].strip()  # Todo las notas se pegan a los productos
+        products = re.split(products_regex, text_parsed)[-1]
 
-        notes_match = re.search(notes_regex, text)
-        notes = notes_match.group(1).strip() if notes_match else None
-        print(table, products, notes)
+        notes = None
+        if "nota" in products or "notas" in products:
+            text_splited = re.split(r"(nota|notas)", products)
+            products = text_splited[0]
+            notes = text_splited[-1]
+
         if table and products:
             products_parsed = parse_products(products)
             dict = {
@@ -58,17 +57,13 @@ def parse_text_to_json(text: str, type: str):
 # TODO: serializar con lo que esta en la base de datos
 # * Hacer prueba de similitud
 def parse_products(products):
-    console.warn("Here parse")
     # Expresión regular que captura la cantidad (en número o palabra) y el nombre del producto
     pattern = (
         r"\b(un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|\d+)\s+([\w\s\-]+)"
     )
 
-    console.warn("Here warn")
     # Encontrar todas las coincidencias de cantidad y productos
     matches = re.findall(pattern, products)
-    console.warn("Here after fin")
-    print(matches)
     # Crear una lista de diccionarios con las claves 'amount' y 'name'
     result = [
         {"amount": count_dictionary.get(match[0], match[0]), "name": match[1].strip()}

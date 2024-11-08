@@ -4,7 +4,6 @@ from app_sio import sio
 import console
 from parser import parse_text_to_json
 
-
 CURRENT_WAITER = ""
 
 
@@ -22,10 +21,8 @@ def recognized_handler(evt: speechsdk.SpeechRecognitionEventArgs):
         print(f"Reconocimiento cancelado: {cancellation_details.reason}")
         return
 
-    print("Waiter", CURRENT_WAITER)
     is_waiter = "mesero" in recognized_text.lower()
     json = parse_text_to_json(recognized_text, "mesero" if is_waiter else "orden")
-    print(json)
 
     if json["type"] == "waiter":
         # TODO: Validar el valor del mesero
