@@ -7,7 +7,7 @@ import { Routes } from '@renderer/common/utils/routes'
 import ProductForm from '../ProductForm'
 import { useAppContext } from '@renderer/common/context/AppContext'
 
-export default function AddProductView() {
+export default function AddProductView(): JSX.Element {
   const [, redirect] = useLocation()
   const [data, setData] = useState({
     name: '',
@@ -18,7 +18,7 @@ export default function AddProductView() {
 
   const { dispatch } = useAppContext()
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent): void => {
     e.preventDefault()
 
     const unfilledField = Object.values(data).some((x) => x === '' || x === 0)
@@ -29,7 +29,7 @@ export default function AddProductView() {
 
     addProduct(data).then((tuple) => {
       const [err, product] = tuple
-      if (err && err.message === 'Server error') {
+      if (err) {
         toast.error('Error adding the product, try later!', { duration: Infinity })
         return
       }
@@ -38,7 +38,7 @@ export default function AddProductView() {
     })
   }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
     setData((prev) => ({ ...prev, [name]: value }))
   }

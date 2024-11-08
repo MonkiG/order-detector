@@ -1,6 +1,6 @@
 import { Link } from 'wouter'
 
-export default function HomeView() {
+export default function HomeView(): JSX.Element {
   return (
     <div className="text-white flex flex-col items-center h-full pt-16">
       <h2 className="text-center text-4xl">

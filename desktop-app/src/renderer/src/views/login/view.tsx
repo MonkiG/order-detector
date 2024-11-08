@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
 import { useLocation } from 'wouter'
 
-export default function LoginView() {
+export default function LoginView(): JSX.Element {
   const [, redirect] = useLocation()
 
   const [data, setData] = useState({
@@ -9,7 +9,7 @@ export default function LoginView() {
     password: ''
   })
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     /**
      * TODO: Setear role en el local storage
@@ -18,7 +18,7 @@ export default function LoginView() {
     redirect('/admin/')
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
 
     setData((prev) => ({ ...prev, [name]: value }))
@@ -78,7 +78,7 @@ const PasswordInput = ({
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
   name: string
   className: string
-}) => {
+}): JSX.Element => {
   const [view, setView] = useState(false)
 
   return (

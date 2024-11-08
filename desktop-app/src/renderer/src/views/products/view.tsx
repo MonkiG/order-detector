@@ -8,10 +8,10 @@ import { Product } from '@renderer/common/types'
 import { deleteProductById } from './services'
 import NoData from '@renderer/common/components/NoData'
 
-export default function ProductsView() {
+export default function ProductsView(): JSX.Element {
   const { state, dispatch } = useAppContext()
 
-  const handleDelete = (id: string) => () => {
+  const handleDelete = (id: string) => (): void => {
     toast.warning('This item would be deleted permantly, do you want to continue?', {
       duration: Infinity,
       action: {

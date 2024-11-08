@@ -1,5 +1,5 @@
-export default function View404() {
-  const handleBack = () => {
+export default function View404(): JSX.Element {
+  const handleBack = (): void => {
     window.history.back()
   }
   return (

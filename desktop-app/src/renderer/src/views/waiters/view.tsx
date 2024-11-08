@@ -8,7 +8,7 @@ import { Link } from 'wouter'
 import { deleteWaiterById } from './services'
 import NoData from '@renderer/common/components/NoData'
 
-export default function WaitersView() {
+export default function WaitersView(): JSX.Element {
   const { state, dispatch } = useAppContext()
 
   const dict: Partial<Record<keyof Waiter, string>> = {
@@ -19,7 +19,7 @@ export default function WaitersView() {
 
   const noShow = ['id']
 
-  const handleDelete = (id: string) => () => {
+  const handleDelete = (id: string) => (): void => {
     toast.warning('This item would be deleted permantly, do you want to continue?', {
       duration: Infinity,
       action: {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext, useContext, useEffect, useReducer } from 'react'
 import { Product, Waiter } from '../types'
 import config from '../utils/config'
@@ -35,7 +36,7 @@ const ProductsContext = createContext<{
   getWaiterById: (_id: string) => undefined
 })
 
-function productsReducer(state: typeof initialState, action: ActionType) {
+function productsReducer(state: typeof initialState, action: ActionType): ContextState {
   if (action.type === 'DELETE_PRODUCT') {
     return { ...state, products: state.products.filter((x) => x.id !== action.payload.id) }
   }
@@ -82,11 +83,11 @@ function productsReducer(state: typeof initialState, action: ActionType) {
 
 const PRODUCTS_ENDPOINT = `${config.API_URL}/product`
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({ children }: { children: React.ReactNode }): JSX.Element {
   const [state, dispatch] = useReducer(productsReducer, initialState)
 
   useEffect(() => {
-    const getProducts = async () => {
+    const getProducts = async (): Promise<void> => {
       try {
         const data = await httpClient(PRODUCTS_ENDPOINT, { method: 'GET' })
         dispatch({ type: 'SET_PRODUCTS', payload: { products: (data as Product[]) || [] } })
@@ -99,14 +100,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
+    ;(async (): Promise<void> => {
       const [, waiters] = await getAllWaiters()
       dispatch({ type: 'SET_WAITERS', payload: { waiters: waiters || [] } })
     })()
   }, [])
 
-  const getProductById = (id: string) => state.products.find((x) => x.id === id)
-  const getWaiterById = (id: string) => state.waiters.find((x) => x.id === id)
+  const getProductById = (id: string): Product => state.products.find((x) => x.id === id)!
+  const getWaiterById = (id: string): Waiter => state.waiters.find((x) => x.id === id)!
 
   return (
     <ProductsContext.Provider value={{ state, dispatch, getProductById, getWaiterById }}>
@@ -115,7 +116,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function useAppContext() {
+export function useAppContext(): {
+  state: ContextState
+  dispatch: React.Dispatch<ActionType>
+  getProductById: (id: string) => Product | undefined
+  getWaiterById: (id: string) => Waiter | undefined
+} {
   const context = useContext(ProductsContext)
   if (!context) throw new Error('You must be inside the context')
 

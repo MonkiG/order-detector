@@ -8,7 +8,7 @@ import { useLocation, useParams } from 'wouter'
 import { Routes } from '@renderer/common/utils/routes'
 import { editWaiterById } from '../services'
 
-export default function EditWaiterView() {
+export default function EditWaiterView(): JSX.Element {
   const { id } = useParams()
   const [, redirect] = useLocation()
   const [waiter, setWaiter] = useState<Waiter | null>(null)
@@ -28,12 +28,12 @@ export default function EditWaiterView() {
     setWaiter(waiter)
   }, [id])
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
     setWaiter((prev) => (prev ? { ...prev, [name]: value } : null))
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent): void => {
     const { id, ...dataToSend } = waiter!
     e.preventDefault()
 

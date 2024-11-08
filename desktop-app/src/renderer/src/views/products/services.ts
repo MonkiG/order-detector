@@ -1,20 +1,23 @@
-import { Product } from '@renderer/common/types'
+import { Product, ReturnTuple } from '@renderer/common/types'
 import config from '@renderer/common/utils/config'
 import httpClient from '@renderer/common/utils/httpClient'
 
-export async function getProductById(id: string) {
+export async function getProductById(id: string): Promise<ReturnTuple<Product>> {
   try {
-    const product = await httpClient(`${config.API_URL}/product/${id}`, { method: 'GET' })
+    const product = await httpClient<Product>(`${config.API_URL}/product/${id}`, { method: 'GET' })
     return [null, product]
   } catch (error) {
-    return [error, null]
+    return [error as Error, null]
   }
 }
 
-export async function editProductById(id: string, data: Partial<Product>) {
+export async function editProductById(
+  id: string,
+  data: Partial<Product>
+): Promise<ReturnTuple<Product>> {
   const parsedData = JSON.stringify(data)
   try {
-    const product = await httpClient(`${config.API_URL}/product/${id}`, {
+    const product = await httpClient<Product>(`${config.API_URL}/product/${id}`, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -23,23 +26,25 @@ export async function editProductById(id: string, data: Partial<Product>) {
     })
     return [null, product]
   } catch (error) {
-    return [error, null]
+    return [error as Error, null]
   }
 }
 
-export async function deleteProductById(id: string) {
+export async function deleteProductById(id: string): Promise<ReturnTuple<Product>> {
   try {
-    const product = await httpClient(`${config.API_URL}/product/${id}`, { method: 'DELETE' })
+    const product = await httpClient<Product>(`${config.API_URL}/product/${id}`, {
+      method: 'DELETE'
+    })
     return [null, product]
   } catch (error) {
-    return [error, null]
+    return [error as Error, null]
   }
 }
 
-export async function addProduct(productToAdd: Partial<Product>) {
+export async function addProduct(productToAdd: Partial<Product>): Promise<ReturnTuple<Product>> {
   const parsedData = JSON.stringify(productToAdd)
   try {
-    const product = await httpClient(`${config.API_URL}/product`, {
+    const product = await httpClient<Product>(`${config.API_URL}/product`, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -48,6 +53,6 @@ export async function addProduct(productToAdd: Partial<Product>) {
     })
     return [null, product]
   } catch (error) {
-    return [error, null]
+    return [error as Error, null]
   }
 }

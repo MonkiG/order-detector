@@ -14,7 +14,7 @@ import AddWaiterView from './views/waiters/add-waiter/view'
 import EditWaiterView from './views/waiters/edit-waiter/view'
 import KitchenView from './views/kitchen/view'
 
-export default function App() {
+export default function App(): JSX.Element {
   const [, redirect] = useLocation()
   useEffect(() => {
     redirect('/home')

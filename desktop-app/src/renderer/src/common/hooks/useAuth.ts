@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'wouter'
 
-export default function useAuth() {
+export default function useAuth(): void {
   const [, redirect] = useLocation()
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { Toaster, toast } from 'sonner'
 import { getMenuTemplate, uploadMenu } from './services'
 import { useAppContext } from '@renderer/common/context/AppContext'
 
-export default function MenuView() {
+export default function MenuView(): JSX.Element {
   const formData = useRef(new FormData()).current
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -29,7 +29,7 @@ export default function MenuView() {
     toast.success('Menu template downloaded successfully', { duration: Infinity })
   }
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
 
     if (!formData.get('file')) {
@@ -53,7 +53,7 @@ export default function MenuView() {
       })
   }
 
-  const handleInputFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { files } = e.target
     const file = files![0]
     formData.append('file', file)

@@ -7,7 +7,12 @@ interface Props {
   handleSubmit: (e: FormEvent) => void
   type: 'edit' | 'add'
 }
-export default function ProductForm({ data, handleChange, handleSubmit, type }: Props) {
+export default function ProductForm({
+  data,
+  handleChange,
+  handleSubmit,
+  type
+}: Props): JSX.Element {
   return (
     <form className="flex flex-col gap-2 mt-5" onSubmit={handleSubmit}>
       <div className="flex flex-col border-2 border-solid border-gray-400">

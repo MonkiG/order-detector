@@ -7,7 +7,7 @@ import { toast, Toaster } from 'sonner'
 import { useAppContext } from '@renderer/common/context/AppContext'
 import { addWaiter } from '../services'
 
-export default function AddWaiterView() {
+export default function AddWaiterView(): JSX.Element {
   const [, redirect] = useLocation()
   const { dispatch } = useAppContext()
   const [data, setData] = useState({
@@ -15,7 +15,7 @@ export default function AddWaiterView() {
     lastName: ''
   })
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent): void => {
     e.preventDefault()
     const unfilledField = Object.values(data).some((x) => x === '')
     if (unfilledField) {
@@ -25,12 +25,12 @@ export default function AddWaiterView() {
 
     addWaiter(data).then((tuple) => {
       const [err, waiter] = tuple
-      if (err && err.message === 'Server error') {
+      if (err) {
+        console.log(err)
         toast.error('Error adding the waiter, try later!', { duration: Infinity })
         return
       }
 
-      console.log(err)
       dispatch({
         type: 'ADD_WAITER',
         payload: {
@@ -44,7 +44,7 @@ export default function AddWaiterView() {
     })
   }
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
     setData((prev) => ({ ...prev, [name]: value }))
   }

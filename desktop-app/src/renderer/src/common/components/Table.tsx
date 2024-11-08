@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react'
 import { Routes } from '../utils/routes'
 import { Link } from 'wouter'
@@ -23,7 +24,7 @@ export default function Table<T extends Record<string, any>>({
   noShow,
   route,
   handleDelete
-}: Props<T>) {
+}: Props<T>): JSX.Element {
   const dataKeys = useMemo(() => {
     const firstObject = data[0]
     if (!firstObject) throw new Error('Undefined data')
@@ -45,7 +46,7 @@ export default function Table<T extends Record<string, any>>({
     return itemsToShow
   }, [data, itemsPerPage])
 
-  const handlePageChange = (page: number) => () => {
+  const handlePageChange = (page: number) => (): void => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page)
     }
@@ -71,7 +72,7 @@ export default function Table<T extends Record<string, any>>({
                 noShow && noShow.includes(key) ? null : (
                   <td key={`row-${x.id}-value-${key}`}>
                     {typeof x[key] === 'boolean' || x[key] === 'true' || x[key] === 'false'
-                      ? x[key]
+                      ? x[key] === 'true'
                         ? 'Yes'
                         : 'No'
                       : x[key]}
@@ -101,7 +102,11 @@ interface PaginationProps {
   currentPage: number
 }
 
-const Pagination = ({ handlePageChange, totalPages, currentPage }: PaginationProps) => {
+const Pagination = ({
+  handlePageChange,
+  totalPages,
+  currentPage
+}: PaginationProps): JSX.Element => {
   return (
     <footer className="mt-10 flex justify-center">
       <button onClick={handlePageChange(currentPage - 1)}>Previous</button>

@@ -8,7 +8,7 @@ import { Product } from '@renderer/common/types'
 import { Routes } from '@renderer/common/utils/routes'
 import { useAppContext } from '@renderer/common/context/AppContext'
 
-export default function EditProductView() {
+export default function EditProductView(): JSX.Element {
   const { id } = useParams()
   const [, redirect] = useLocation()
   const { getProductById, dispatch } = useAppContext()
@@ -27,12 +27,12 @@ export default function EditProductView() {
     setProduct(product)
   }, [id])
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
     setProduct((prev) => (prev ? { ...prev, [name]: value } : null))
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent): void => {
     e.preventDefault()
     if (!product) return
 
@@ -42,6 +42,7 @@ export default function EditProductView() {
         toast.error('Error adding the product, try later!', { duration: Infinity })
         return
       }
+      console.log(product)
       dispatch({ type: 'EDIT_PRODUCT', payload: { id: id!, product: product } })
       redirect(Routes.products)
     })

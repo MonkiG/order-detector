@@ -37,8 +37,8 @@ const placeholderData: Order[] = [
   }
 ]
 
-export default function OrdersView() {
-  const { data } = useSocket<Order[]>('orders', undefined, placeholderData)
+export default function OrdersView(): JSX.Element {
+  const { data } = useSocket<Order>('orders', undefined, placeholderData)
   /**
    * TODO:
    * - Modifcar la tabla para redirigir a editar y ver details
@@ -52,7 +52,10 @@ export default function OrdersView() {
       <div className="mt-12">
         {data && data.length > 0 ? (
           data.map((o) => (
-            <div className="border-2 border-solid border-black flex justify-between p-5">
+            <div
+              key={o.id}
+              className="border-2 border-solid border-black flex justify-between p-5 my-1"
+            >
               <div>
                 <h2>Table: {o.table}</h2>
                 <h2>Waiter : {o.waiter}</h2>

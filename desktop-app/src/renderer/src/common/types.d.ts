@@ -14,3 +14,5 @@ export interface Waiter {
   createdAt: string
   updatedAt: string
 }
+
+export type ReturnTuple<T> = [Error, null] | [null, T]
