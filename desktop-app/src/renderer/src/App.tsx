@@ -15,10 +15,13 @@ import EditWaiterView from './views/waiters/edit-waiter/view'
 import KitchenView from './views/kitchen/view'
 
 export default function App(): JSX.Element {
-  const [, redirect] = useLocation()
+  const [location, redirect] = useLocation()
   useEffect(() => {
-    redirect('/home')
-  }, [])
+    // Redirige solo si estás en la raíz
+    if (location === '/') {
+      redirect('/home')
+    }
+  }, [location, redirect])
 
   return (
     <Switch>

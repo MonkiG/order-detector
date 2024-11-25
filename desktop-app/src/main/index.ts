@@ -3,6 +3,27 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+function createKitchenWindow(): void {
+  const kitchenWindow = new BrowserWindow({
+    fullscreen: true,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'), // Preload ya configurado
+      sandbox: false
+    }
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    // Asume que tienes una ruta /kitchen en tu app de React
+    kitchenWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/kitchen`)
+  } else {
+    kitchenWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      hash: '/kitchen' // Navegar a la vista de "Kitchen" directamente
+    })
+  }
+}
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -52,6 +73,9 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  ipcMain.on('open-kitchen-window', () => {
+    createKitchenWindow()
+  })
   createWindow()
 
   app.on('activate', function () {

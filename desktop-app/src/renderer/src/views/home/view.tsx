@@ -1,6 +1,14 @@
 import { Link } from 'wouter'
 import logo from '../../assets/brand-logo.jpeg'
+
 export default function HomeView(): JSX.Element {
+  const openKitchen = (): void => {
+    if (window.api) {
+      window.api.openKitchenWindow()
+    } else {
+      console.error('API not available')
+    }
+  }
   return (
     <div className=" bg-[#f5c84c] flex flex-col items-center h-full pt-16">
       <figure className="flex flex-col items-center">
@@ -18,12 +26,12 @@ export default function HomeView(): JSX.Element {
         >
           Go to Panel Admin
         </Link>
-        <Link
-          to="/kitchen"
+        <button
+          onClick={openKitchen}
           className="text-xl border-2 border-solid border-white p-5 rounded-md hover:bg-[rgba(255,255,255,0.1)]"
         >
           Open Kitchen screen
-        </Link>
+        </button>
       </div>
     </div>
   )

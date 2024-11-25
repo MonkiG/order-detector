@@ -1,10 +1,33 @@
+import { useEffect, useState } from 'react'
+
 interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   className?: string
 }
-export default function BackButton({ className }: Props): JSX.Element {
+export default function BackButton({ className }: Props): JSX.Element | null {
+  const [canGoBack, setCanGoBack] = useState(false)
+
+  useEffect(() => {
+    const updateBackButtonState = (): void => {
+      setCanGoBack(window.history.length > 1) // Si hay más de una entrada en el historial
+    }
+
+    // Actualiza al cargar y cada vez que cambie el estado del historial
+    window.addEventListener('popstate', updateBackButtonState)
+    updateBackButtonState()
+
+    // Cleanup
+    return (): void => {
+      window.removeEventListener('popstate', updateBackButtonState)
+    }
+  }, [])
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>): void => {
     e.preventDefault()
     window.history.back()
+  }
+
+  if (!canGoBack) {
+    return null
   }
 
   return (
