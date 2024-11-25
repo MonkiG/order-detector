@@ -12,7 +12,7 @@ interface Props {
 export default function ViewLayout({ children, viewTitle }: Props): JSX.Element {
   const [location] = useLocation()
   return (
-    <div className="flex">
+    <div className="flex bg-[#f5c84c]">
       <SideBar location={location} />
       <ContentLayout>
         <div className="relative">

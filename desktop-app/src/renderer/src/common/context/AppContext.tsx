@@ -102,7 +102,7 @@ export function AppProvider({ children }: { children: React.ReactNode }): JSX.El
   useEffect(() => {
     ;(async (): Promise<void> => {
       const [, waiters] = await getAllWaiters()
-      dispatch({ type: 'SET_WAITERS', payload: { waiters: waiters || [] } })
+      dispatch({ type: 'SET_WAITERS', payload: { waiters: waiters! } })
     })()
   }, [])
 

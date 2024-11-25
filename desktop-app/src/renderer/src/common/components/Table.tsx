@@ -67,10 +67,10 @@ export default function Table<T extends Record<string, any>>({
         </thead>
         <tbody>
           {currentData.map((x) => (
-            <tr key={`row-${x.id}`}>
+            <tr key={`row-${x.id}`} className="border-b-2 border-gray-200">
               {Object.keys(x).map((key) =>
                 noShow && noShow.includes(key) ? null : (
-                  <td key={`row-${x.id}-value-${key}`}>
+                  <td key={`row-${x.id}-value-${key}`} className="py-4">
                     {typeof x[key] === 'boolean' || x[key] === 'true' || x[key] === 'false'
                       ? x[key] === 'true'
                         ? 'Yes'
@@ -79,9 +79,19 @@ export default function Table<T extends Record<string, any>>({
                   </td>
                 )
               )}
-              <td className="flex gap-2 justify-center">
-                <Link to={`/${route}/edit/${x.id}`}>Edit</Link>
-                <button onClick={handleDelete(x.id)}>Delete</button>
+              <td className="flex gap-2 justify-center items-center py-4">
+                <Link
+                  to={`/${route}/edit/${x.id}`}
+                  className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Edit
+                </Link>
+                <button
+                  onClick={handleDelete(x.id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

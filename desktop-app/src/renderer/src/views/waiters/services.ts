@@ -13,7 +13,7 @@ export async function getAllWaiters(): Promise<ReturnTuple<Waiter[]>> {
 
 export async function deleteWaiterById(id: string): Promise<ReturnTuple<Waiter>> {
   try {
-    const waiter = await await httpClient<Waiter>(`${config.API_URL}/waiter/${id}`, {
+    const waiter = await httpClient<Waiter>(`${config.API_URL}/waiter/${id}`, {
       method: 'DELETE'
     })
     return [null, waiter]

@@ -32,7 +32,7 @@ export default function KitchenView(): React.JSX.Element {
    * TODO: Arreglar los estilos de esta mamada
    * */
   return (
-    <div className="bg-white h-screen flex flex-col justify-between">
+    <div className="bg-[#f5c84c] h-screen flex flex-col justify-between">
       <div className="relative p-5">
         <BackButton className="absolute top-5 left-2" />
         <h2 className="text-center text-4xl font-bold">Products</h2>
