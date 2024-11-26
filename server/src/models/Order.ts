@@ -11,4 +11,16 @@ export interface Order {
   open: boolean
   table: Table
   createdAt: string
+  updatedAt: string
+}
+
+export interface createOrderDto {
+  id: ObjectId
+  products: ObjectId[]
+  waiter: string | number
+  partial: boolean
+  open: boolean
+  table: Table
+  createdAt: Date
+  updatedAt: Date
 }

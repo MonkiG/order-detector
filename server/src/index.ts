@@ -9,14 +9,21 @@ import OrderController from './controllers/order.controller'
 import ProductController from './controllers/product.controller'
 import WaiterController from './controllers/waiter.controller'
 import { AddData } from './types'
+import { ORIGIN_URL } from './utils/config'
+import {
+  createOrder,
+  getLatestOpenOrder,
+  updatedOrderById
+} from './services/order.services'
+import { ObjectId } from 'mongodb'
 
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
-  cors: { origin: 'http://localhost:5173' }
+  cors: { origin: ORIGIN_URL }
 })
 
-app.use(cors({ origin: ['http://localhost:5173'] }))
+app.use(cors({ origin: [ORIGIN_URL!] }))
 app.use(express.json())
 app.use(morgan('dev'))
 
@@ -34,32 +41,41 @@ io.on('connection', socket => {
   /**
    * Aqui se recibiran los productos obtenidos mediante la voz
    */
-  socket.on('add', (products: AddData) => {
-    if (!products.data.waiter) return
+  socket.on('add', async (order: AddData) => {
+    if (!order.data.waiter) return
 
-    const { waiter, table, notes } = products.data
+    const dbOrder = await getLatestOpenOrder(order.data.table)
+    const products = order.data.products.flatMap(x =>
+      new Array(x.amount).fill(new ObjectId(x.id))
+    )
 
-    const productsToKitchen = products.data.products.map(x => {
-      return {
-        id: crypto.randomUUID(),
-        name: x.name,
-        amount: x.amount,
-        waiter,
-        table,
-        notes
+    let orderToSend
+    if (dbOrder) {
+      const parseOrder = {
+        ...order.data,
+        products,
+        waiter: new ObjectId(order.data.waiter.id)
       }
-    })
-    console.log(productsToKitchen)
-    /**
-     * Aquí se van a mandar los productos a la vista de la cocina
-     */
+      orderToSend = await updatedOrderById(dbOrder._id, parseOrder)
+      console.log('Order', orderToSend)
+    } else {
+      const parseOrder = {
+        ...order.data,
+        products: order.data.products.map(x => new ObjectId(x.id)),
+        waiter: new ObjectId(order.data.waiter.id)
+      }
+      orderToSend = await createOrder(parseOrder)
+    }
+    const productsToKitchen = products.map(x => ({
+      id: x,
+      notes: orderToSend!.notes,
+      waiter: orderToSend!.waiter,
+      table: orderToSend!.table
+    }))
 
     io.emit('kitchen-products', productsToKitchen)
 
-    /**
-     * Aquí se van a mandar los productos al orders panel admin
-     */
-    io.emit('orders', () => {})
+    io.emit('orders', orderToSend)
   })
 })
 

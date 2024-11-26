@@ -72,7 +72,7 @@ export default function Table<T extends Record<string, any>>({
                 noShow && noShow.includes(key) ? null : (
                   <td key={`row-${x.id}-value-${key}`} className="py-4">
                     {typeof x[key] === 'boolean' || x[key] === 'true' || x[key] === 'false'
-                      ? x[key] === 'true'
+                      ? x[key] === 'true' || x[key] === true
                         ? 'Yes'
                         : 'No'
                       : x[key]}

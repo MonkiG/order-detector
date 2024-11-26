@@ -10,5 +10,6 @@ export const Routes = {
   editWaiter: '/waiters/edit/:id',
   kitchen: '/kitchen',
   login: '/login',
-  order: '/order/'
+  order: '/order/:id',
+  pay: '/order/pay/:id'
 }
