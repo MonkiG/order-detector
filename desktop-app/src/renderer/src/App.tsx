@@ -15,6 +15,7 @@ import EditWaiterView from './views/waiters/edit-waiter/view'
 import KitchenView from './views/kitchen/view'
 import OrderDetailsView from './views/orders/[id]'
 import OrderPayView from './views/orders/pay'
+import OrderEditView from './views/orders/edit'
 
 export default function App(): JSX.Element {
   const [location, redirect] = useLocation()
@@ -42,6 +43,7 @@ export default function App(): JSX.Element {
 
       <Route path={Routes.order} component={OrderDetailsView} />
       <Route path={Routes.pay} component={OrderPayView} />
+      <Route path={Routes.orderEdit} component={OrderEditView} />
 
       <Route path={Routes.kitchen} component={KitchenView} />
       <Route path={'*'} component={View404} />

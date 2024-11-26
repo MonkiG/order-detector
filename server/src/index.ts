@@ -43,7 +43,7 @@ io.on('connection', socket => {
    */
   socket.on('add', async (order: AddData) => {
     if (!order.data.waiter) return
-
+    let alreadyCreated = false
     const dbOrder = await getLatestOpenOrder(order.data.table)
     const products = order.data.products.flatMap(x =>
       new Array(x.amount).fill(new ObjectId(x.id))
@@ -51,6 +51,7 @@ io.on('connection', socket => {
 
     let orderToSend
     if (dbOrder) {
+      alreadyCreated = true
       const parseOrder = {
         ...order.data,
         products,
@@ -61,21 +62,24 @@ io.on('connection', socket => {
     } else {
       const parseOrder = {
         ...order.data,
-        products: order.data.products.map(x => new ObjectId(x.id)),
+        products,
         waiter: new ObjectId(order.data.waiter.id)
       }
       orderToSend = await createOrder(parseOrder)
     }
     const productsToKitchen = products.map(x => ({
       id: x,
+      uiId: crypto.randomUUID(),
       notes: orderToSend!.notes,
       waiter: orderToSend!.waiter,
       table: orderToSend!.table
     }))
-
+    console.log(productsToKitchen)
     io.emit('kitchen-products', productsToKitchen)
 
-    io.emit('orders', orderToSend)
+    if (!alreadyCreated) {
+      io.emit('orders', orderToSend)
+    }
   })
 })
 

@@ -3,11 +3,15 @@ import NoData from '@renderer/common/components/NoData'
 import { useAppContext } from '@renderer/common/context/AppContext'
 
 import useSocket from '@renderer/common/hooks/useSocket'
+import { useEffect, useRef, useState } from 'react'
 
 interface Product {
+  uiId: string
   id: string
+
   table: string
   waiter: string
+  name: string
   notes: string | null
 }
 
@@ -23,6 +27,7 @@ const socketHandler = (
 }
 
 export default function KitchenView(): React.JSX.Element {
+  const blackList = useRef<string[]>([]).current
   const socketData = useSocket<Product[], Product[]>({
     event: 'kitchen-products',
     defaultData: [],
@@ -30,13 +35,22 @@ export default function KitchenView(): React.JSX.Element {
   })
 
   const { getProductById, getWaiterById } = useAppContext()
+  const [data, setData] = useState<Product[]>([])
 
-  const data = socketData.map((x) => ({
+  const handleDelete = (uiId: string) => (): void => {
+    setData((prev) => prev.filter((product) => product.uiId !== uiId))
+    blackList.push(uiId)
+  }
+
+  useEffect(() => {
+    setData(socketData.filter((x) => !blackList.includes(x.uiId)))
+  }, [socketData])
+
+  const parsedData = data.map((x) => ({
     ...x,
     name: getProductById(x.id)!.name,
     waiter: getWaiterById(x.waiter)!.name
   }))
-
   return (
     <div className="bg-[#f5c84c] h-screen flex flex-col">
       {/* Header Section */}
@@ -47,8 +61,8 @@ export default function KitchenView(): React.JSX.Element {
 
       {/* Content Section */}
       <div className="h-full px-5 pb-5 flex flex-col overflow-y-auto">
-        {data && data.length > 0 ? (
-          data.map((p, i) => (
+        {parsedData && parsedData.length > 0 ? (
+          parsedData.map((p, i) => (
             <div
               key={p.id + i}
               className="bg-white p-4 rounded-lg shadow-lg mb-4 border border-gray-300"
@@ -77,10 +91,20 @@ export default function KitchenView(): React.JSX.Element {
                   </p>
                 )}
               </div>
+
+              {/* Delete Button */}
+              <div className="mt-4 text-right">
+                <button
+                  onClick={handleDelete(p.uiId)}
+                  className="text-red-500 hover:text-red-700 font-semibold"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         ) : (
-          <NoData dataName="products" className="h-full p-0 my-0" />
+          <NoData type="kitchen" dataName="products" className="h-full p-0 my-0" />
         )}
       </div>
     </div>

@@ -16,7 +16,17 @@ interface Props {
 }
 
 export default function SideBar({ location }: Props): JSX.Element {
-  const noShow = ['login', 'order', 'addProduct', 'editProduct', 'addWaiter', 'editWaiter', 'pay']
+  const noShow = [
+    'login',
+    'order',
+    'addProduct',
+    'editProduct',
+    'addWaiter',
+    'editWaiter',
+    'pay',
+    'kitchen',
+    'orderEdit'
+  ]
   const sieBarRoutes = useMemo(
     () => Object.entries(Routes).filter(([x]) => !noShow.includes(x)),
     []
