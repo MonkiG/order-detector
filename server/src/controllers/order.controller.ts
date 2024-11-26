@@ -25,16 +25,26 @@ router.get('/', async (_, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-  const { id } = req.params
-  const parsedId = new ObjectId(id)
+  try {
+    const { id } = req.params
+    const parsedId = new ObjectId(id)
 
-  const [error, order] = await getById(parsedId)
+    const [error, order] = await getById(parsedId)
 
-  if (error && error.message === 'Not found')
-    return res.status(404).json({ message: error.message, error: null })
+    if (error && error.message === 'Not found') {
+      return res.status(404).json({ message: error.message, error: null })
+    }
 
-  if (error) return res.status(500).json({ message: 'Server error', error })
-  return res.status(200).json(order)
+    if (error) {
+      return res.status(500).json({ message: 'Server error', error })
+    }
+
+    return res.status(200).json(order)
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: (err as Error).message })
+  }
 })
 
 router.patch('/:id', async (req, res) => {

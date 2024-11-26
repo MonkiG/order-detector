@@ -21,18 +21,8 @@ const socketHandler = (
   newOrder: Order
 ): void => {
   set((prev) => {
-    // Buscar si la orden ya existe por ID
-    const orderIndex = prev.findIndex((order) => order.id === newOrder.id)
-
-    if (orderIndex !== -1) {
-      // Si la orden existe, actualiza la orden con los nuevos datos
-      const updatedOrders = [...prev]
-      updatedOrders[orderIndex] = newOrder
-      return updatedOrders
-    } else {
-      // Si la orden no existe, la agrega como nueva
-      return [...prev, newOrder]
-    }
+    // Si la orden no existe, la agrega como nueva
+    return [...prev, newOrder]
   })
 }
 
@@ -97,7 +87,7 @@ export default function OrdersView(): JSX.Element {
 
       {/* Lista de órdenes */}
       {filteredData.length > 0 ? (
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 overflow-auto max-h-[70vh]">
           {filteredData.map((o) => (
             <div
               key={o.id}
@@ -119,6 +109,12 @@ export default function OrdersView(): JSX.Element {
                   className="text-white bg-green-500 hover:bg-green-600 transition-colors rounded-md px-6 py-2 text-sm font-medium"
                 >
                   Pay
+                </Link>
+                <Link
+                  href={`/order/edit/${o.id}`}
+                  className="text-white bg-yellow-500 hover:bg-yellow-600 transition-colors rounded-md px-4 py-2 text-sm font-medium"
+                >
+                  Edit
                 </Link>
               </div>
             </div>

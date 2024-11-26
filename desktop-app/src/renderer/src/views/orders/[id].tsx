@@ -32,10 +32,11 @@ export interface OrderDetailsView {
 export default function OrderDetailsView(): JSX.Element {
   const { id } = useParams<{ id: string }>()
   const [data, setData] = useState<OrderDetailsView>()
-  const { getProductById, getWaiterById } = useAppContext()
+  const { getProductById, getWaiterById, state } = useAppContext()
 
   const parseId = id.slice(-6)
 
+  console.log(id)
   useEffect(() => {
     getOrder(id).then((tuple) => {
       const [err, dbData] = tuple
@@ -43,10 +44,14 @@ export default function OrderDetailsView(): JSX.Element {
         console.log(err)
         return
       }
+      const waiter = getWaiterById(dbData.waiter)!
+      const products = dbData.products.map((x) => getProductById(x)!)
+
+      console.log(waiter, products, state)
       setData({
         ...dbData,
-        waiter: getWaiterById(dbData.waiter)!,
-        products: dbData.products.map((x) => getProductById(x)!)
+        waiter,
+        products
       })
     })
   }, [])

@@ -230,7 +230,7 @@ export async function updatedOrderById(
   return orderUpdated
 }
 
-export async function createOrder(data: any) {
+export async function createOrder(data: any): Promise<any> {
   const orderCreated = await OrderCollection.insertOne({
     ...data,
     createdAt: new Date(),
@@ -241,5 +241,8 @@ export async function createOrder(data: any) {
   const createdOrder = await OrderCollection.findOne({
     _id: orderCreated.insertedId
   })
-  return createdOrder
+
+  const { _id, ...rest } = createdOrder!
+
+  return { id: _id, ...rest }
 }

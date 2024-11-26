@@ -36,3 +36,5 @@ export async function payOrder(id: string): Promise<ReturnTuple<unknown>> {
     return [error as Error, null]
   }
 }
+
+export async function updateOrder(id: string, data: unknown): Promise<ReturnTuple<unknown>> {}
