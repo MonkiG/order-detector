@@ -1,5 +1,6 @@
 import BackButton from '@renderer/common/components/BackButton'
 import NoData from '@renderer/common/components/NoData'
+import { useAppContext } from '@renderer/common/context/AppContext'
 
 import useSocket from '@renderer/common/hooks/useSocket'
 
@@ -7,8 +8,6 @@ interface Product {
   id: string
   table: string
   waiter: string
-  name: string
-  amount: number | string
   notes: string | null
 }
 
@@ -22,37 +21,61 @@ const socketHandler = (
     set((prev) => [...prev, data])
   }
 }
+
 export default function KitchenView(): React.JSX.Element {
-  const data = useSocket<Product[]>({
+  const socketData = useSocket<Product[], Product[]>({
     event: 'kitchen-products',
     defaultData: [],
     handler: socketHandler
   })
-  /**
-   * TODO: Arreglar los estilos de esta mamada
-   * */
+
+  const { getProductById, getWaiterById } = useAppContext()
+
+  const data = socketData.map((x) => ({
+    ...x,
+    name: getProductById(x.id)!.name,
+    waiter: getWaiterById(x.waiter)!.name
+  }))
+
   return (
-    <div className="bg-[#f5c84c] h-screen flex flex-col justify-between">
+    <div className="bg-[#f5c84c] h-screen flex flex-col">
+      {/* Header Section */}
       <div className="relative p-5">
-        <BackButton className="absolute top-5 left-2" />
-        <h2 className="text-center text-4xl font-bold">Products</h2>
+        <BackButton className="absolute top-5 left-2 text-white" />
+        <h2 className="text-center text-4xl font-bold text-white">Kitchen Orders</h2>
       </div>
-      <div className="h-full px-5 pb-5 flex flex-col ">
+
+      {/* Content Section */}
+      <div className="h-full px-5 pb-5 flex flex-col overflow-y-auto">
         {data && data.length > 0 ? (
-          data.map((p) => (
+          data.map((p, i) => (
             <div
-              key={p.id}
-              className="flex justify-between border-b-2 border-solid border-black p-2"
+              key={p.id + i}
+              className="bg-white p-4 rounded-lg shadow-lg mb-4 border border-gray-300"
             >
-              <div className="flex flex-col items center justify-center">
-                <h2 className="font-semibold">Table: {p.table}</h2>
-                <h2 className="font-semibold">Waiter: {p.waiter}</h2>
+              <div className="flex justify-between items-start">
+                {/* Product Information (Name, Table, Waiter) */}
+                <div className="flex flex-col">
+                  <h3 className="text-xl font-semibold text-gray-700">
+                    {p.name || 'Product name'}
+                  </h3>
+                  <h4 className="text-lg text-gray-600">Table: {p.table}</h4>
+                  <h4 className="text-lg text-gray-600">Waiter: {p.waiter}</h4>
+                </div>
+                {/* Product ID */}
+                <div className="flex flex-col items-center justify-center">
+                  <span className="font-bold text-gray-800">ID: {p.id}</span>
+                </div>
               </div>
-              <div className="flex flex-col items center justify-center">{p.name}</div>
-              <div className="flex flex-col items center justify-center">
-                <h2 className="font-semibold">Amount: {p.amount}</h2>
-                {p.notes && <h2 className="font-semibold">Notes: {p.notes}</h2>}
-                {/**TODO: Manejar las notas que son muy largas */}
+
+              {/* Notes Section */}
+              <div className="mt-2">
+                {p.notes && (
+                  <p className="text-sm text-gray-500">
+                    <strong>Notes:</strong>{' '}
+                    {p.notes.length > 100 ? `${p.notes.slice(0, 100)}...` : p.notes}
+                  </p>
+                )}
               </div>
             </div>
           ))
@@ -63,3 +86,11 @@ export default function KitchenView(): React.JSX.Element {
     </div>
   )
 }
+
+/**
+ *  const data = useSocket<Product[]>({
+    event: 'kitchen-products',
+    defaultData: [],
+    handler: socketHandler
+  })
+ */

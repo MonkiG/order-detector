@@ -3,7 +3,7 @@ import { ChangeEvent, FormEvent } from 'react'
 
 interface Props {
   data: Partial<Waiter>
-  handleChange: (e: ChangeEvent<HTMLInputElement>) => void
+  handleChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
   handleSubmit: (e: FormEvent) => void
   type: 'edit' | 'add'
 }
@@ -33,6 +33,20 @@ export default function WaiterForm({ data, handleChange, handleSubmit, type }: P
           onChange={handleChange}
           className="bg-gray-300"
         />
+      </div>
+      <div className="flex flex-col border-2 border-solid border-gray-400">
+        <label htmlFor="lastName" className="font-bold">
+          Active
+        </label>
+        <select
+          className="bg-gray-300"
+          onChange={handleChange}
+          name="active"
+          value={data.active !== undefined ? data.active.toString() : 'true'}
+        >
+          <option value={'true'}>Yes</option>
+          <option value={'false'}>No</option>
+        </select>
       </div>
       <button
         className="border-2 border-solid border-black rounded-md p-1 hover:bg-[rgba(0,0,0,.1)]"

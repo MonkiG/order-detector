@@ -28,9 +28,10 @@ export default function EditWaiterView(): JSX.Element {
     setWaiter(waiter)
   }, [id])
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
-    setWaiter((prev) => (prev ? { ...prev, [name]: value } : null))
+    const parsedValue = value === 'true' ? true : value === 'false' ? false : value
+    setWaiter((prev) => (prev ? { ...prev, [name]: parsedValue } : null))
   }
 
   const handleSubmit = (e: FormEvent): void => {

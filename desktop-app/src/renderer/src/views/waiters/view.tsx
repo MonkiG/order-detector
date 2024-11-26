@@ -12,12 +12,14 @@ export default function WaitersView(): JSX.Element {
   const { state, dispatch } = useAppContext()
 
   const dict: Partial<Record<keyof Waiter, string>> = {
-    lastName: 'last name',
-    createdAt: 'created date',
-    updatedAt: 'updated date'
+    name: 'Name',
+    lastName: 'Last name',
+    createdAt: 'Created date',
+    updatedAt: 'Updated date',
+    active: 'Active'
   }
 
-  const noShow = ['id']
+  const noShow = ['id', 'createdAt', 'updatedAt']
 
   const handleDelete = (id: string) => (): void => {
     toast.warning('This item would be deleted permantly, do you want to continue?', {
@@ -35,6 +37,7 @@ export default function WaitersView(): JSX.Element {
       }
     })
   }
+  console.log(state.waiters)
   return (
     <ViewLayout viewTitle="Restaurant's waiters">
       <Toaster richColors position="top-right" closeButton />
