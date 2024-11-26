@@ -4,7 +4,7 @@ from app_sio import sio
 import console
 from parser import parse_text_to_json
 
-CURRENT_WAITER = ""
+CURRENT_WAITER = {}
 
 
 def recognized_handler(evt: speechsdk.SpeechRecognitionEventArgs):
@@ -25,11 +25,11 @@ def recognized_handler(evt: speechsdk.SpeechRecognitionEventArgs):
     json = parse_text_to_json(recognized_text, "mesero" if is_waiter else "orden")
 
     if json["type"] == "waiter":
-        # TODO: Validar el valor del mesero
         CURRENT_WAITER = json["data"]
-        console.success("Mesero setted successfully: ", CURRENT_WAITER)
+        console.success("Mesero setted successfully: " + CURRENT_WAITER["id"])
+        return
 
-    if json["type"] == "order" and CURRENT_WAITER == "":
+    if json["type"] == "order" and not CURRENT_WAITER:
         console.warn(
             """
             You should set the waiter before take the order
@@ -40,6 +40,7 @@ def recognized_handler(evt: speechsdk.SpeechRecognitionEventArgs):
         json["data"]["waiter"] = CURRENT_WAITER
 
         console.log("Enviando orden")
+        print(json)
         sio.emit("add", json)
         console.success("Orden enviada")
     else:
@@ -61,6 +62,7 @@ def recognize_real_time():
 
     speech_recognizer.recognized.connect(recognized_handler)
     speech_recognizer.start_continuous_recognition()
+
     # speech_recognizer.recognizing.connect(recognized_handler)
     console.log("Reconocimiento iniciado, Presiona Ctrl+C para detener.")
 

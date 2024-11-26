@@ -1,6 +1,6 @@
 import re
-import console
-import unicodedata
+from data_container import local_data
+from utils import remove_accents, is_valid_waiter, is_valid_product
 
 count_dictionary = {
     "un": "1",
@@ -18,12 +18,15 @@ count_dictionary = {
 
 
 def parse_text_to_json(text: str, type: str):
-    text_parsed = _remove_accents(text.lower().strip())
-
+    text_parsed = remove_accents(text.lower().strip())
     if type == "mesero":
         waiter = text_parsed.split(" ")[-1]
-        if waiter != "":
-            return {"type": "waiter", "data": waiter.replace(".", "")}
+        valid_waiter, waiter_data = is_valid_waiter(waiter, local_data["waiters"])
+        if waiter != "" and valid_waiter:
+            return {
+                "type": "waiter",
+                "data": {"name": waiter_data["name"], "id": waiter_data["id"]},
+            }
         else:
             raise ValueError(
                 f"No se pudo extraer el nombre del mesero del texto: '{text}'"
@@ -65,16 +68,16 @@ def parse_products(products):
     # Encontrar todas las coincidencias de cantidad y productos
     matches = re.findall(pattern, products)
     # Crear una lista de diccionarios con las claves 'amount' y 'name'
-    result = [
-        {"amount": count_dictionary.get(match[0], match[0]), "name": match[1].strip()}
-        for match in matches
-    ]
+    result = []
 
+    for match in matches:
+        amount = count_dictionary.get(
+            match[0], match[0]
+        )  # Convertir cantidad a número si aplica
+        name = match[1].strip()  # Limpiar el nombre del producto
+        is_valid, product = is_valid_product(name, local_data["products"])
+        if is_valid:
+            result.append({"amount": int(amount), "id": product["id"]})
+        else:
+            print(f"Producto no válido: {name}")
     return result
-
-
-def _remove_accents(input_str):
-    # Descomponer caracteres acentuados
-    nfkd_form = unicodedata.normalize("NFKD", input_str)
-    # Filtrar solo caracteres ASCII (eliminando los diacríticos)
-    return "".join([c for c in nfkd_form if unicodedata.category(c) != "Mn"])

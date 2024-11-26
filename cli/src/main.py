@@ -3,6 +3,7 @@ from services.products_services import get_products
 from services.waiters_services import get_waiters
 from app_sio import sio
 from config import SERVER_URL
+from data_container import set_products, set_waiters
 
 import console
 import time
@@ -27,10 +28,12 @@ def main():
 
     console.log("getting menu")
     products = retrying_service(RETRYING_COUNT, get_products)
+    set_products(products)
     console.success("Products retrieved successfully")
 
     console.log("Getting waiters")
     waiters = retrying_service(RETRYING_COUNT, get_waiters)
+    set_waiters(waiters)
     console.success("Waiters retrieved successfully")
 
     console.log("Connecting to server socket")
